@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Football Predictor</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-football-ball"></i>
+                    <h1>CFB Predictor</h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Model Status</span>
+                        <span class="stat-value" id="model-status">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Last Updated</span>
+                        <span class="stat-value" id="last-updated">--</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Team Selection Section -->
+            <section class="team-selection">
+                <h2><i class="fas fa-users"></i> Select Teams</h2>
+                
+                <div class="teams-grid">
+                    <!-- Team 1 -->
+                    <div class="team-selector">
+                        <label for="team1-search">Home Team</label>
+                        <div class="search-container">
+                            <input type="text" id="team1-search" placeholder="Search for team..." class="team-search">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <div class="search-results" id="team1-results"></div>
+                        <div class="selected-team" id="team1-selected" style="display: none;">
+                            <div class="team-info">
+                                <div class="team-name"></div>
+                                <div class="team-details"></div>
+                                <div class="team-stats"></div>
+                            </div>
+                            <button class="remove-team" onclick="clearTeam(1)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- VS Divider -->
+                    <div class="vs-divider">
+                        <span>VS</span>
+                    </div>
+
+                    <!-- Team 2 -->
+                    <div class="team-selector">
+                        <label for="team2-search">Away Team</label>
+                        <div class="search-container">
+                            <input type="text" id="team2-search" placeholder="Search for team..." class="team-search">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <div class="search-results" id="team2-results"></div>
+                        <div class="selected-team" id="team2-selected" style="display: none;">
+                            <div class="team-info">
+                                <div class="team-name"></div>
+                                <div class="team-details"></div>
+                                <div class="team-stats"></div>
+                            </div>
+                            <button class="remove-team" onclick="clearTeam(2)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Settings -->
+                <div class="game-settings">
+                    <h3><i class="fas fa-cog"></i> Game Settings</h3>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label for="week">Week</label>
+                            <select id="week">
+                                <option value="1">Week 1</option>
+                                <option value="2">Week 2</option>
+                                <option value="3">Week 3</option>
+                                <option value="4">Week 4</option>
+                                <option value="5">Week 5</option>
+                                <option value="6">Week 6</option>
+                                <option value="7">Week 7</option>
+                                <option value="8">Week 8</option>
+                                <option value="9">Week 9</option>
+                                <option value="10" selected>Week 10</option>
+                                <option value="11">Week 11</option>
+                                <option value="12">Week 12</option>
+                                <option value="13">Week 13</option>
+                                <option value="14">Week 14</option>
+                                <option value="15">Week 15</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="season">Season</label>
+                            <select id="season">
+                                <option value="2024" selected>2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="location">Location</label>
+                            <select id="location">
+                                <option value="home">Home (Team 1)</option>
+                                <option value="away">Away (Team 2)</option>
+                                <option value="neutral">Neutral Site</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="season-type">Season Type</label>
+                            <select id="season-type">
+                                <option value="2" selected>Regular Season</option>
+                                <option value="3">Postseason</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Predict Button -->
+                <button class="predict-btn" id="predict-btn" onclick="makePrediction()" disabled>
+                    <i class="fas fa-magic"></i>
+                    Make Prediction
+                </button>
+            </section>
+
+            <!-- Prediction Results -->
+            <section class="prediction-results" id="prediction-results" style="display: none;">
+                <h2><i class="fas fa-crystal-ball"></i> Prediction Results</h2>
+                
+                <div class="matchup-header">
+                    <div class="team-card" id="result-team1">
+                        <div class="team-logo">🏈</div>
+                        <div class="team-info">
+                            <div class="team-name"></div>
+                            <div class="team-record"></div>
+                        </div>
+                        <div class="predicted-score"></div>
+                    </div>
+                    
+                    <div class="prediction-summary">
+                        <div class="winner-badge">
+                            <span id="winner-text">Winner</span>
+                        </div>
+                        <div class="prediction-details">
+                            <div class="detail-item">
+                                <span class="label">Margin:</span>
+                                <span class="value" id="margin">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Total:</span>
+                                <span class="value" id="total">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Confidence:</span>
+                                <span class="value confidence" id="confidence">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="team-card" id="result-team2">
+                        <div class="team-logo">🏈</div>
+                        <div class="team-info">
+                            <div class="team-name"></div>
+                            <div class="team-record"></div>
+                        </div>
+                        <div class="predicted-score"></div>
+                    </div>
+                </div>
+
+                <!-- Detailed Stats Comparison -->
+                <div class="stats-comparison">
+                    <h3><i class="fas fa-chart-bar"></i> Team Comparison</h3>
+                    <div class="stats-grid">
+                        <div class="stat-row">
+                            <div class="stat-name">Wins</div>
+                            <div class="stat-values">
+                                <span id="team1-wins">-</span>
+                                <span id="team2-wins">-</span>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-name">Losses</div>
+                            <div class="stat-values">
+                                <span id="team1-losses">-</span>
+                                <span id="team2-losses">-</span>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-name">Avg Score</div>
+                            <div class="stat-values">
+                                <span id="team1-avg-score">-</span>
+                                <span id="team2-avg-score">-</span>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-name">Avg Allowed</div>
+                            <div class="stat-values">
+                                <span id="team1-avg-allowed">-</span>
+                                <span id="team2-avg-allowed">-</span>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-name">Home Record</div>
+                            <div class="stat-values">
+                                <span id="team1-home">-</span>
+                                <span id="team2-home">-</span>
+                            </div>
+                        </div>
+                        <div class="stat-row">
+                            <div class="stat-name">Away Record</div>
+                            <div class="stat-values">
+                                <span id="team1-away">-</span>
+                                <span id="team2-away">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Matchups -->
+            <section class="popular-matchups">
+                <h2><i class="fas fa-fire"></i> Popular Matchups</h2>
+                <div class="matchups-grid" id="popular-matchups-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-spinner">
+                <i class="fas fa-football-ball fa-spin"></i>
+                <p>Making Prediction...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
